@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a reproducible House Cat problem
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Remove credentials, private addresses, and personal data before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Firmware version and build environment
+      placeholder: 0.1.0-alpha.1 / crowpanel_idf5
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted logs or photos
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets and identifying network details.
+          required: true

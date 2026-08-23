@@ -1,0 +1,38 @@
+digraph UXFlow {
+  graph [bgcolor="#F3EAD3", pad="0.35", nodesep="0.48", ranksep="0.68", fontname="DejaVu Sans", label="HOUSE CAT • TODDLER-SIMPLE NAVIGATION", labelloc="t", fontsize=23, fontcolor="#1E252B"];
+  node [shape=rect, style="rounded,filled", fontname="DejaVu Sans", fontsize=12, color="#1E252B", penwidth=2, margin="0.18,0.12"];
+  edge [color="#3A6E6A", penwidth=2, arrowsize=0.8, fontname="DejaVu Sans", fontsize=10, fontcolor="#1E252B"];
+
+  home [label="HOME\nRocker: change card\nClick: pet\nMenu: open menu", fillcolor="#E56B5D", fontcolor="white", width=2.6];
+  menu [label="MENU CAROUSEL\nRocker: choose\nClick: open\nBack: home", fillcolor="#D9A441", width=2.6];
+  cat [label="MY CAT\nLevel + bond\nClick: pet", fillcolor="#FFF9EA"];
+  missions [label="MISSIONS\nOne objective\nClick: interact", fillcolor="#FFF9EA"];
+  whiskers [label="WHISKERS\nWireless shell", fillcolor="#FFF9EA"];
+  library [label="LIBRARY\nReader shell", fillcolor="#FFF9EA"];
+  lab [label="LAB\nExtension shell", fillcolor="#FFF9EA"];
+  settings [label="SETTINGS\nRocker: rotate\nClick: save\nBack: cancel", fillcolor="#FFF9EA"];
+  alert [label="NOTIFICATION\nCat reaction + event icon\nClick: acknowledge", fillcolor="#1E252B", fontcolor="white", width=2.9];
+
+  home -> menu [label="Menu"];
+  menu -> home [label="Back / Menu"];
+  menu -> cat [label="Click"];
+  menu -> missions [label="Click"];
+  menu -> whiskers [label="Click"];
+  menu -> library [label="Click"];
+  menu -> lab [label="Click"];
+  menu -> settings [label="Click"];
+  cat -> menu [label="Back"];
+  missions -> menu [label="Back"];
+  whiskers -> menu [label="Back"];
+  library -> menu [label="Back"];
+  lab -> menu [label="Back"];
+  settings -> menu [label="Back"];
+  settings -> home [label="Click save"];
+
+  alert -> home [label="ack / expire", style=bold];
+  home -> alert [label="priority interrupt", style=bold];
+  menu -> alert [style=dashed, label="interrupt"];
+  cat -> alert [style=dashed, label="interrupt"];
+  missions -> alert [style=dashed, label="interrupt"];
+  alert -> menu [style=dashed, label="resume previous"];
+}

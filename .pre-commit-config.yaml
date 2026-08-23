@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: repository-contracts
+        name: repository contracts
+        entry: python tools/verify_repo.py
+        language: system
+        pass_filenames: false
+      - id: security-policy
+        name: current-tree security policy
+        entry: python tools/security_audit.py
+        language: system
+        pass_filenames: false
+      - id: whitespace
+        name: trailing whitespace
+        entry: git diff --check --cached
+        language: system
+        pass_filenames: false

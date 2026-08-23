@@ -1,0 +1,273 @@
+# Home Assistant package examples for House Cat.
+# Replace entity IDs and the device topic before enabling.
+
+script:
+  housecat_notify:
+    alias: House Cat - Send notification
+    mode: queued
+    fields:
+      title:
+        required: true
+        selector:
+          text:
+      body:
+        required: false
+        selector:
+          text:
+      kind:
+        default: generic
+        selector:
+          select:
+            options: [generic, person, vehicle, home, warning, mission]
+      priority:
+        default: notice
+        selector:
+          select:
+            options: [ambient, info, notice, important, urgent, critical]
+      ttl_s:
+        default: 180
+        selector:
+          number:
+            min: 0
+            max: 86400
+    sequence:
+      - action: mqtt.publish
+        data:
+          topic: housecat/housecat-desk-01/command/notification
+          retain: false
+          payload: >-
+            {{ {
+              "id": "ha-" ~ (now().timestamp() | int),
+              "title": title,
+              "body": body | default("", true),
+              "kind": kind | default("generic", true),
+              "priority": priority | default("notice", true),
+              "ttl_s": ttl_s | default(180, true),
+              "ack": priority in ["urgent", "critical"]
+            } | to_json }}
+
+  housecat_send_home_snapshot:
+    alias: House Cat - Send home snapshot
+    mode: restart
+    sequence:
+      - variables:
+          weather_entity: >-
+            {% if states('weather.forecast_home') not in ['unknown', 'unavailable'] %}
+              weather.forecast_home
+            {% else %}
+              {{ (states.weather
+                  | rejectattr('state', 'in', ['unknown', 'unavailable'])
+                  | map(attribute='entity_id') | list | first) | default('', true) }}
+            {% endif %}
+          outside_temperature: "{{ state_attr(weather_entity, 'temperature') }}"
+          outside_unit: "{{ state_attr(weather_entity, 'temperature_unit') }}"
+      - condition: template
+        value_template: >-
+          {{ weather_entity | length > 0 and is_number(outside_temperature) }}
+      - action: mqtt.publish
+        data:
+          topic: housecat/housecat-desk-01/command/home
+          retain: true
+          payload: >-
+            {% set room_entities = [
+              'sensor.hallway_temperature'
+            ] %}
+            {% set valid = room_entities
+              | map('states')
+              | reject('in', ['unknown', 'unavailable', 'none', ''])
+              | map('float')
+              | list %}
+            {% set outside = outside_temperature | float %}
+            {% set outside_f = (outside * 9 / 5 + 32)
+              if outside_unit in ['°C', 'C'] else outside %}
+            {% set inside_f = states('sensor.hallway_temperature') | float(0) %}
+            {% set inside_humidity = states('sensor.hallway_humidity') | float(0) %}
+            {% set hour = now().hour %}
+            {% if hour < 6 %}
+              {% set pal_message = 'Still nighttime. Cozy paws.' %}
+            {% elif hour < 12 %}
+              {% set pal_message = 'Good morning! Home feels comfy.' %}
+            {% elif outside_f >= 90 %}
+              {% set pal_message = 'Hot outside. Stay cool, pal.' %}
+            {% elif inside_humidity >= 60 %}
+              {% set pal_message = 'A little muggy inside today.' %}
+            {% elif hour < 18 %}
+              {% set pal_message = 'Everything looks comfy.' %}
+            {% elif hour < 22 %}
+              {% set pal_message = 'Good evening! Home feels cozy.' %}
+            {% else %}
+              {% set pal_message = 'Good night. Cozy paws.' %}
+            {% endif %}
+            {% set ns = namespace(rooms=[]) %}
+            {% if is_number(states('sensor.hallway_temperature')) %}
+              {% set hallway = {
+                "name": "Hallway",
+                "temperature_f": states('sensor.hallway_temperature') | float
+              } %}
+              {% if is_number(states('sensor.hallway_humidity')) %}
+                {% set hallway = dict(hallway, humidity=states('sensor.hallway_humidity') | float) %}
+              {% endif %}
+              {% set ns.rooms = ns.rooms + [hallway] %}
+            {% endif %}
+            {% set payload = {
+              "outside_f": outside_f | round(1),
+              "condition": states(weather_entity),
+              "condition_label": states(weather_entity) | replace('_', ' ') | title,
+              "pal_label": "PAL",
+              "pal_message": pal_message,
+              "weather_entity": weather_entity,
+              "observed_at": now().isoformat(),
+              "epoch_s": now().timestamp() | int
+            } %}
+            {% if valid | count %}
+              {% set payload = dict(payload, inside_f=valid | average) %}
+            {% endif %}
+            {% if ns.rooms | count %}
+              {% set payload = dict(payload, rooms=ns.rooms) %}
+            {% endif %}
+            {{ payload | to_json }}
+
+  housecat_set_mission:
+    alias: House Cat - Set mission
+    mode: restart
+    fields:
+      title:
+        required: true
+        selector:
+          text:
+      detail:
+        required: false
+        selector:
+          text:
+      progress:
+        default: 0
+        selector:
+          number:
+            min: 0
+            max: 100
+      target:
+        default: 100
+        selector:
+          number:
+            min: 1
+            max: 100
+    sequence:
+      - action: mqtt.publish
+        data:
+          topic: housecat/housecat-desk-01/command/mission
+          retain: true
+          payload: >-
+            {{ {
+              "id": "ha-mission",
+              "title": title,
+              "detail": detail | default("", true),
+              "progress": progress | int,
+              "target": target | int,
+              "complete": (progress | int) >= (target | int)
+            } | to_json }}
+
+automation:
+  - alias: House Cat - Bedtime reminder
+    id: housecat_bedtime_reminder
+    mode: single
+    triggers:
+      - trigger: time
+        at: "01:00:00"
+    conditions:
+      - condition: template
+        value_template: "{{ states('sensor.house_cat_activity') != 'sleep' }}"
+    actions:
+      - action: script.housecat_notify
+        data:
+          title: Bedtime, pal
+          body: You have not started sleep yet. Wind down together?
+          kind: warning
+          priority: important
+          ttl_s: 7200
+
+  - alias: House Cat - Focus phase changed
+    id: housecat_focus_phase_changed
+    mode: restart
+    triggers:
+      - trigger: state
+        entity_id: sensor.house_cat_focus_phase
+        from: focus
+        to: break
+      - trigger: state
+        entity_id: sensor.house_cat_focus_phase
+        from: break
+        to: focus
+    actions:
+      - action: script.housecat_notify
+        data:
+          title: "{{ 'Break time' if trigger.to_state.state == 'break' else 'Focus time' }}"
+          body: "{{ 'Stretch and reset for five minutes.' if trigger.to_state.state == 'break' else 'Ready for another focused block?' }}"
+          kind: mission
+          priority: notice
+          ttl_s: 600
+
+  - alias: House Cat - Refresh home snapshot
+    id: housecat_refresh_home_snapshot
+    mode: restart
+    triggers:
+      - trigger: homeassistant
+        event: start
+      - trigger: time_pattern
+        minutes: "/5"
+      - trigger: state
+        entity_id:
+          - weather.forecast_home
+          - sensor.hallway_temperature
+          - sensor.hallway_humidity
+    actions:
+      - delay: "00:00:05"
+      - action: script.housecat_send_home_snapshot
+
+  - alias: House Cat - Sam arrived
+    id: housecat_sam_arrived
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: person.sam
+        to: home
+    actions:
+      - action: script.housecat_notify
+        data:
+          title: Sam is home!
+          body: Hoo-ray!
+          kind: person
+          priority: notice
+          ttl_s: 180
+
+  - alias: House Cat - Ioniq charging complete
+    id: housecat_ioniq_charging_complete
+    mode: single
+    # Replace this trigger with the entity/state supplied by your vehicle integration.
+    triggers:
+      - trigger: state
+        entity_id: sensor.ioniq_5_n_charging_status
+        to: complete
+    actions:
+      - action: script.housecat_notify
+        data:
+          title: Ioniq 5 N is ready!
+          body: Charging is complete.
+          kind: vehicle
+          priority: important
+          ttl_s: 900
+
+  - alias: House Cat - Leak alert
+    id: housecat_leak_alert
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.kitchen_leak
+        to: "on"
+    actions:
+      - action: script.housecat_notify
+        data:
+          title: Water detected!
+          body: Please check the kitchen.
+          kind: warning
+          priority: urgent
+          ttl_s: 0

@@ -1,0 +1,12 @@
+{
+  "name": "HouseCatCore",
+  "version": "0.1.0-alpha.1",
+  "description": "Portable House Cat domain, interaction, rendering, and sprite core",
+  "keywords": ["housecat", "epaper", "ui", "home-assistant"],
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "includeDir": "include",
+    "srcDir": "src"
+  }
+}

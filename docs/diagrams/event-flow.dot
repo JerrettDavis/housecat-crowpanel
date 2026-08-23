@@ -1,0 +1,24 @@
+digraph EventFlow {
+  graph [bgcolor="#F3EAD3", pad="0.35", rankdir=LR, nodesep="0.38", ranksep="0.55", fontname="DejaVu Sans", label="INPUT, HOME ASSISTANT, AND E-PAPER FLOW", labelloc="t", fontsize=23, fontcolor="#1E252B"];
+  node [shape=rect, style="rounded,filled", fontname="DejaVu Sans", fontsize=12, color="#1E252B", penwidth=2, margin="0.16,0.12"];
+  edge [color="#3A6E6A", penwidth=2, arrowsize=0.8, fontname="DejaVu Sans", fontsize=10];
+
+  buttons [label="PHYSICAL CONTROLS\n5 active-low inputs", fillcolor="#FFF9EA"];
+  task [label="INPUT TASK\nDebounce • Repeat • Queue", fillcolor="#DCE9E5"];
+  ha [label="HOME ASSISTANT\nAutomation or script", fillcolor="#FFF9EA"];
+  mqtt [label="MQTT BRIDGE\nParse semantic payload", fillcolor="#DCE9E5"];
+  app [label="HOUSECAT APP\nOne state machine", fillcolor="#E56B5D", fontcolor="white"];
+  scheduler [label="RENDER SCHEDULER\n150 ms settle • 450 ms cap\nFull refresh is immediate", fillcolor="#D9A441"];
+  renderer [label="UI RENDERER\nCat + icon + short text", fillcolor="#FFF9EA"];
+  panel [label="E-PAPER\nPartial or full refresh", fillcolor="#1E252B", fontcolor="white"];
+  state [label="STATE + EVENT\nMQTT publish", fillcolor="#DCE9E5"];
+  nvs [label="DELAYED NVS SAVE\nNo write per click", fillcolor="#DCE9E5"];
+
+  buttons -> task -> app;
+  ha -> mqtt -> app;
+  app -> scheduler [label="RefreshKind"];
+  scheduler -> renderer -> panel;
+  app -> state;
+  app -> nvs;
+  panel -> task [style=dashed, label="input remains live\nduring refresh", constraint=false];
+}

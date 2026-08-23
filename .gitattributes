@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+*.png binary
+*.pgm binary
+*.zip binary
+*.bin binary
+*.elf binary
+
+# Markdown uses two trailing spaces for explicit line breaks.
+*.md whitespace=-blank-at-eol

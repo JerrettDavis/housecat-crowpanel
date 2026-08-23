@@ -1,0 +1,11 @@
+title = "House Cat secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Inert configuration template and scanner test signatures"
+paths = [
+  '''include/secrets\.example\.h''',
+  '''tools/security_audit\.py''',
+]

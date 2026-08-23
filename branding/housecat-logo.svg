@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">House Cat logo</title>
+  <desc id="desc">A cat face integrated into a simple house mark with the words House Cat.</desc>
+  <rect width="1200" height="360" rx="34" fill="#F3EAD3"/>
+  <g transform="translate(54 38)">
+    <path d="M36 142 L142 44 L248 142 V276 H36 Z" fill="#1E252B"/>
+    <path d="M68 145 L102 76 L142 116 L182 76 L216 145 V251 H68 Z" fill="#F9F5E9"/>
+    <path d="M102 76 L113 128 L142 116 L171 128 L182 76 L142 116 Z" fill="#E56B5D"/>
+    <path d="M91 170 C107 147 177 147 193 170 C205 188 199 226 179 241 C159 256 125 256 105 241 C85 226 79 188 91 170 Z" fill="#F9F5E9" stroke="#1E252B" stroke-width="10"/>
+    <ellipse cx="119" cy="191" rx="10" ry="13" fill="#1E252B"/>
+    <ellipse cx="165" cy="191" rx="10" ry="13" fill="#1E252B"/>
+    <path d="M134 211 L150 211 L142 220 Z" fill="#E56B5D"/>
+    <path d="M142 220 C135 230 126 229 120 224 M142 220 C149 230 158 229 164 224" fill="none" stroke="#1E252B" stroke-width="7" stroke-linecap="round"/>
+    <path d="M96 211 L60 204 M96 222 L58 229 M188 211 L224 204 M188 222 L226 229" fill="none" stroke="#1E252B" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="226" cy="70" r="22" fill="#D9A441"/>
+    <path d="M226 33 V12 M226 128 V107 M189 70 H168 M284 70 H263 M200 44 L185 29 M267 111 L252 96 M252 44 L267 29 M185 111 L200 96" stroke="#D9A441" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(350 76)">
+    <text x="0" y="114" font-family="DejaVu Sans, Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="4" fill="#1E252B">HOUSE CAT</text>
+    <rect x="4" y="143" width="724" height="8" rx="4" fill="#E56B5D"/>
+    <text x="4" y="204" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="3" fill="#3A6E6A">A LITTLE BUDDY FOR A SMART HOME</text>
+  </g>
+</svg>

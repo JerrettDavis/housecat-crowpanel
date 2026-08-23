@@ -1,0 +1,42 @@
+digraph HouseCatArchitecture {
+  graph [bgcolor="#F3EAD3", pad="0.35", nodesep="0.42", ranksep="0.62", fontname="DejaVu Sans", label="HOUSE CAT • FIRST-PASS ARCHITECTURE", labelloc="t", fontsize=24, fontcolor="#1E252B"];
+  node [shape=rect, style="rounded,filled", fontname="DejaVu Sans", fontsize=12, color="#1E252B", penwidth=2, margin="0.16,0.11"];
+  edge [color="#3A6E6A", penwidth=2, arrowsize=0.8, fontname="DejaVu Sans", fontsize=10, fontcolor="#1E252B"];
+
+  subgraph cluster_experience {
+    label="EXPERIENCE"; color="#E56B5D"; penwidth=2; style="rounded"; fontcolor="#1E252B";
+    buddy [label="Buddy\nCat • Mood • Bond", fillcolor="#FFF9EA"];
+    home [label="Home\nWeather • Rooms • Alerts", fillcolor="#FFF9EA"];
+    missions [label="Missions\nObjective • Progress • Reward", fillcolor="#FFF9EA"];
+    modules [label="Modules\nWhiskers • Library • Lab", fillcolor="#FFF9EA"];
+  }
+
+  app [label="HOUSECAT APP\nDeterministic state machine\nNavigation • Priority • Progression", fillcolor="#E56B5D", fontcolor="white", width=3.1];
+  renderer [label="RESPONSIVE 1-BIT UI\nPortrait + Landscape layouts\n0° • 90° • 180° • 270°", fillcolor="#D9A441"];
+  eventbus [label="SEMANTIC EVENTS\nInput • HomeSnapshot • Notification • Mission", fillcolor="#DCE9E5"];
+
+  subgraph cluster_adapters {
+    label="ADAPTERS"; color="#3A6E6A"; penwidth=2; style="rounded";
+    input [label="5-Control Input\nBuffered FreeRTOS task", fillcolor="#EAF2EF"];
+    mqtt [label="MQTT Bridge\nHA discovery + contract", fillcolor="#EAF2EF"];
+    persistence [label="NVS Persistence\nCat • Settings • Mission", fillcolor="#EAF2EF"];
+    display [label="JD79661 Display\nQualified direct driver", fillcolor="#EAF2EF"];
+  }
+
+  subgraph cluster_hardware {
+    label="CROWPANEL ESP32-S3"; color="#1E252B"; penwidth=2; style="rounded";
+    controls [label="Menu • Back • Up • Down • Click", fillcolor="#FFFFFF"];
+    radio [label="Wi-Fi • BLE", fillcolor="#FFFFFF"];
+    flash [label="8 MB Flash • 8 MB PSRAM", fillcolor="#FFFFFF"];
+    epaper [label="122 × 250 E-Paper", fillcolor="#FFFFFF"];
+    expansion [label="UART • GPIO40 • GPIO41", fillcolor="#FFFFFF"];
+  }
+
+  buddy -> app; home -> app; missions -> app; modules -> app;
+  input -> eventbus; mqtt -> eventbus; eventbus -> app;
+  app -> renderer [label="AppState"];
+  app -> persistence [dir=both, label="snapshots"];
+  renderer -> display [label="4,000-byte framebuffer"];
+  controls -> input; radio -> mqtt; flash -> persistence; display -> epaper;
+  expansion -> modules [style=dashed, label="future capability protocol"];
+}

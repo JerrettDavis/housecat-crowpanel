@@ -1,0 +1,14 @@
+.pio/
+.venv/
+.vscode/
+build/
+build-*/
+coverage/
+__pycache__/
+*.py[cod]
+.DS_Store
+include/secrets.h
+include/secrets.local.h
+dist/housecat-*/
+*.pem
+*.key

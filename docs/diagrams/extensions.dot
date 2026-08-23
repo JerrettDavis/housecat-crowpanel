@@ -1,0 +1,22 @@
+digraph Extensions {
+  graph [bgcolor="#F3EAD3", pad="0.35", rankdir=LR, nodesep="0.45", ranksep="0.58", fontname="DejaVu Sans", label="FUTURE EXTENSION SEAM", labelloc="t", fontsize=23, fontcolor="#1E252B"];
+  node [shape=rect, style="rounded,filled", fontname="DejaVu Sans", fontsize=12, color="#1E252B", penwidth=2, margin="0.18,0.12"];
+  edge [color="#3A6E6A", penwidth=2, arrowsize=0.8, fontname="DejaVu Sans", fontsize=10];
+
+  modules [label="HOUSE CAT MODULES\nWhiskers • Library • Lab • Missions", fillcolor="#E56B5D", fontcolor="white"];
+  registry [label="CAPABILITY REGISTRY\nWhat can I do right now?", fillcolor="#D9A441"];
+  protocol [label="HOUSE CAT EXTENSION PROTOCOL\nHELLO • CAPABILITIES • EVENT\nCOMMAND • QUERY • RESULT • STATUS", fillcolor="#DCE9E5"];
+  uart [label="UART\nFirst transport", fillcolor="#FFF9EA"];
+  gpio [label="GPIO 40 / 41\nSimple accessory bus", fillcolor="#FFF9EA"];
+  ble [label="BLE\nFuture transport", fillcolor="#FFF9EA"];
+  rp [label="REFERENCE COLLAR\nRP2040 / secondary MCU", fillcolor="#1E252B", fontcolor="white"];
+  storage [label="Storage\nmicroSD", fillcolor="#FFFFFF"];
+  gps [label="Location\nGPS", fillcolor="#FFFFFF"];
+  io [label="Lab I/O\nGPIO • ADC • I²C • SPI", fillcolor="#FFFFFF"];
+  sensors [label="Sensors\nEnvironment • Motion", fillcolor="#FFFFFF"];
+
+  modules -> registry -> protocol;
+  protocol -> uart; protocol -> gpio; protocol -> ble;
+  uart -> rp;
+  rp -> storage; rp -> gps; rp -> io; rp -> sensors;
+}
