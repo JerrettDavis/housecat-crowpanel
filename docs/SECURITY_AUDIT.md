@@ -17,18 +17,21 @@ python tools/security_audit.py ../housecat-crowpanel-pio-$(cat VERSION)
 
 ## Git history
 
-Status for this working copy: **not verified**. The supplied directory did not
-contain its original `.git` metadata, so no tool can prove what earlier commits
-contained. Before making an existing remote public, restore/clone the original
-repository and run:
+Status for this repository: **verified**. The supplied working directory had no
+Git metadata and no matching remote repository, so the sanitized tree was
+initialized as a new `main` repository with a clean root commit. Gitleaks scans
+every reachable commit, Git integrity checks pass, and local secret files are
+absent from the object database. Run the same audit at any time with:
 
 ```bash
 gitleaks git --redact --verbose .
 ```
 
 The Security workflow fetches complete history (`fetch-depth: 0`) and repeats
-that scan on every push and pull request. Any credential previously committed
-must be revoked and rotated even if history is later rewritten.
+that scan on every push and pull request. No earlier, external history was
+available or imported; do not graft an older repository onto this clean history
+without separately auditing it. Any credential previously committed elsewhere
+must be revoked and rotated even if that other history is later rewritten.
 
 ## Release checklist
 

@@ -49,7 +49,8 @@ def verify_markdown_links(root: Path) -> None:
 def verify(root: Path) -> None:
     required_public_files = (
         "LICENSE", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md",
-        "SUPPORT.md", ".github/dependabot.yml", ".github/workflows/security.yml",
+        "SUPPORT.md", ".editorconfig", ".gitattributes", ".pre-commit-config.yaml",
+        ".github/dependabot.yml", ".github/workflows/security.yml",
         ".github/workflows/release.yml", "docs/GETTING_STARTED.md",
         "docs/USER_GUIDE.md", "docs/TROUBLESHOOTING.md", "docs/SECURITY_AUDIT.md",
     )

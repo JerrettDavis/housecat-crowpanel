@@ -22,3 +22,11 @@ By contributing, you agree that your contribution is licensed under the MIT
 license. Please follow the [Code of Conduct](CODE_OF_CONDUCT.md), report
 security issues privately as described in [SECURITY.md](SECURITY.md), and add a
 release-note entry for user-visible changes.
+
+Optional local hooks use only installed system tools:
+
+```bash
+python -m pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
