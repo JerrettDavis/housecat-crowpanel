@@ -82,8 +82,8 @@ def verify(root: Path) -> None:
 
     requirements = (root / "requirements-platformio.txt").read_text(encoding="utf-8").splitlines()
     requirements = [line.strip() for line in requirements if line.strip() and not line.lstrip().startswith("#")]
-    if requirements != ["platformio==6.1.19"]:
-        fail("requirements-platformio.txt must pin exactly platformio==6.1.19")
+    if requirements != ["platformio==6.2.0"]:
+        fail("requirements-platformio.txt must pin exactly platformio==6.2.0")
 
     parser = configparser.ConfigParser(interpolation=None)
     parser.read(root / "platformio.ini")
